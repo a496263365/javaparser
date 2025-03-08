@@ -23,10 +23,7 @@ package com.github.javaparser.symbolsolver.javaparsermodel.contexts;
 
 import com.github.javaparser.ast.body.AnnotationDeclaration;
 import com.github.javaparser.resolution.TypeSolver;
-import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
+import com.github.javaparser.resolution.declarations.*;
 import com.github.javaparser.resolution.model.SymbolReference;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserAnnotationDeclaration;
@@ -66,6 +63,11 @@ public class AnnotationDeclarationContext extends AbstractJavaParserContext<Anno
     public SymbolReference<ResolvedMethodDeclaration> solveMethod(
             String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
         return javaParserTypeDeclarationAdapter.solveMethod(name, argumentsTypes, staticOnly);
+    }
+
+    public SymbolReference<ResolvedAnnotationMemberDeclaration> solveMember(
+            String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
+        return javaParserTypeDeclarationAdapter.solveMember(name, argumentsTypes, staticOnly);
     }
 
     ///

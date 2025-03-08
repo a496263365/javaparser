@@ -24,11 +24,16 @@ package com.github.javaparser.symbolsolver.javaparsermodel.declarations;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.AnnotationDeclaration;
 import com.github.javaparser.ast.body.AnnotationMemberDeclaration;
+import com.github.javaparser.resolution.Context;
 import com.github.javaparser.resolution.TypeSolver;
 import com.github.javaparser.resolution.declarations.*;
+import com.github.javaparser.resolution.logic.AnnotationMemberResolutionCapability;
+import com.github.javaparser.resolution.logic.MethodResolutionCapability;
+import com.github.javaparser.resolution.model.SymbolReference;
 import com.github.javaparser.resolution.model.typesystem.ReferenceTypeImpl;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
+import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFactory;
 import com.github.javaparser.symbolsolver.logic.AbstractTypeDeclaration;
 import java.lang.annotation.Inherited;
 import java.util.*;
@@ -37,7 +42,7 @@ import java.util.stream.Collectors;
 /**
  * @author Federico Tomassetti
  */
-public class JavaParserAnnotationDeclaration extends AbstractTypeDeclaration implements ResolvedAnnotationDeclaration {
+public class JavaParserAnnotationDeclaration extends AbstractTypeDeclaration implements ResolvedAnnotationDeclaration, AnnotationMemberResolutionCapability {
 
     private com.github.javaparser.ast.body.AnnotationDeclaration wrappedNode;
     private TypeSolver typeSolver;
@@ -74,6 +79,7 @@ public class JavaParserAnnotationDeclaration extends AbstractTypeDeclaration imp
         // TODO #1838
         throw new UnsupportedOperationException();
     }
+
 
     @Override
     public boolean isAssignableBy(ResolvedType type) {
@@ -163,5 +169,15 @@ public class JavaParserAnnotationDeclaration extends AbstractTypeDeclaration imp
     @Override
     public Optional<Node> toAst() {
         return Optional.of(wrappedNode);
+    }
+
+    @Deprecated
+    public Context getContext() {
+        return JavaParserFactory.getContext(wrappedNode, typeSolver);
+    }
+
+    @Override
+    public SymbolReference<ResolvedAnnotationMemberDeclaration> solveMember(String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
+        return getContext().solveMember(name, argumentsTypes, staticOnly);
     }
 }

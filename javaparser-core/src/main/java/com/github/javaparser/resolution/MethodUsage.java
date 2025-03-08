@@ -20,6 +20,7 @@
  */
 package com.github.javaparser.resolution;
 
+import com.github.javaparser.resolution.declarations.ResolvedAnnotationMemberDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclaration;
@@ -52,6 +53,10 @@ public class MethodUsage implements ResolvedTypeParametrized {
         paramTypes.addAll(declaration.formalParameterTypes());
         exceptionTypes.addAll(declaration.getSpecifiedExceptions());
         returnType = declaration.getReturnType();
+    }
+
+    public MethodUsage(ResolvedAnnotationMemberDeclaration declaration){
+        returnType = declaration.getType();
     }
 
     public MethodUsage(ResolvedMethodDeclaration declaration, List<ResolvedType> paramTypes, ResolvedType returnType) {

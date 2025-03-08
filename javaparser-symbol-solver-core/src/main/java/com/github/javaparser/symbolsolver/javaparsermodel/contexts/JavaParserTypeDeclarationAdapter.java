@@ -310,4 +310,14 @@ public class JavaParserTypeDeclarationAdapter {
         }
         return SymbolReference.unsolved();
     }
+
+    public SymbolReference<ResolvedAnnotationMemberDeclaration> solveMember(String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
+        List<ResolvedAnnotationMemberDeclaration> candidateMembers = typeDeclaration.asAnnotation().getAnnotationMembers().stream()
+                .filter(m -> m.getName().equals(name))
+                .filter(m -> !staticOnly)
+                .collect(Collectors.toList());
+
+//        return MethodResolutionLogic.findMostApplicable(candidateMembers, name, argumentsTypes, typeSolver);
+        return candidateMembers.isEmpty() ? SymbolReference.unsolved() : SymbolReference.solved(candidateMembers.get(0));
+    }
 }

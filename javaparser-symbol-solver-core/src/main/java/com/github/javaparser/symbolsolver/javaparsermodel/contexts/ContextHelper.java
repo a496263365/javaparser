@@ -21,11 +21,16 @@
 
 package com.github.javaparser.symbolsolver.javaparsermodel.contexts;
 
+import com.github.javaparser.ast.body.AnnotationMemberDeclaration;
 import com.github.javaparser.resolution.Context;
 import com.github.javaparser.resolution.MethodUsage;
+import com.github.javaparser.resolution.declarations.ResolvedAnnotationMemberDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
+import com.github.javaparser.resolution.logic.AnnotationMemberResolutionCapability;
+import com.github.javaparser.resolution.model.SymbolReference;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.core.resolution.MethodUsageResolutionCapability;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -48,6 +53,13 @@ public class ContextHelper {
         if (typeDeclaration instanceof MethodUsageResolutionCapability) {
             return ((MethodUsageResolutionCapability) typeDeclaration)
                     .solveMethodAsUsage(name, argumentsTypes, invokationContext, typeParameters);
+        } else if (typeDeclaration instanceof AnnotationMemberResolutionCapability) {
+            SymbolReference<ResolvedAnnotationMemberDeclaration> memberRef =
+                    (((AnnotationMemberResolutionCapability) typeDeclaration)
+                            .solveMember(name, argumentsTypes, false));
+            ResolvedAnnotationMemberDeclaration member = memberRef.getDeclaration().get();
+            return Optional.of(new MethodUsage(member));
+
         }
         throw new UnsupportedOperationException(typeDeclaration.toString());
     }

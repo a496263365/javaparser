@@ -371,6 +371,12 @@ public interface Context {
         return solveMethodInParentContext(name, argumentsTypes, staticOnly);
     }
 
+    default SymbolReference<ResolvedAnnotationMemberDeclaration> solveMember(
+            String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
+        // Default to solving within the parent context.
+        return solveMemberInParentContext(name, argumentsTypes, staticOnly);
+    }
+
     default SymbolReference<ResolvedMethodDeclaration> solveMethodInParentContext(
             String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
         Optional<Context> optionalParentContext = getParent();
@@ -379,6 +385,16 @@ public interface Context {
         }
         // Delegate solving to the parent context.
         return optionalParentContext.get().solveMethod(name, argumentsTypes, staticOnly);
+    }
+
+    default SymbolReference<ResolvedAnnotationMemberDeclaration> solveMemberInParentContext(
+            String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
+        Optional<Context> optionalParentContext = getParent();
+        if (!optionalParentContext.isPresent()) {
+            return SymbolReference.unsolved();
+        }
+        // Delegate solving to the parent context.
+        return optionalParentContext.get().solveMember(name, argumentsTypes, staticOnly);
     }
 
     /**

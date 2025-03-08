@@ -20,6 +20,7 @@
  */
 package com.github.javaparser.resolution.logic;
 
+import com.github.javaparser.ast.body.AnnotationMemberDeclaration;
 import com.github.javaparser.resolution.MethodAmbiguityException;
 import com.github.javaparser.resolution.MethodUsage;
 import com.github.javaparser.resolution.TypeSolver;
@@ -27,6 +28,7 @@ import com.github.javaparser.resolution.declarations.*;
 import com.github.javaparser.resolution.model.SymbolReference;
 import com.github.javaparser.resolution.model.typesystem.ReferenceTypeImpl;
 import com.github.javaparser.resolution.types.*;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -73,7 +75,6 @@ public class MethodResolutionLogic {
      * Note that "needle" refers to that value being used as a search/query term to match against.
      *
      * @return true, if the given ResolvedMethodDeclaration matches the given name/types (normally obtained from a MethodUsage)
-     *
      * @see {@link MethodResolutionLogic#isApplicable(MethodUsage, String, List, TypeSolver)}
      */
     private static boolean isApplicable(
@@ -116,8 +117,8 @@ public class MethodResolutionLogic {
                 // Confirm all of these grouped "trailing" arguments have the required type -- if not, this is not a
                 // valid type. (Maybe this is also done later..?)
                 for (int variadicArgumentIndex = countOfMethodParametersDeclared;
-                        variadicArgumentIndex < countOfNeedleArgumentsPassed;
-                        variadicArgumentIndex++) {
+                     variadicArgumentIndex < countOfNeedleArgumentsPassed;
+                     variadicArgumentIndex++) {
                     ResolvedType currentArgumentType = needleArgumentTypes.get(variadicArgumentIndex);
                     boolean argumentIsAssignableToVariadicComponentType = expectedVariadicParameterType
                             .asArrayType()
@@ -164,7 +165,7 @@ public class MethodResolutionLogic {
             }
             boolean isAssignableWithoutSubstitution = expectedDeclaredType.isAssignableBy(actualArgumentType)
                     || (methodDeclaration.getParam(i).isVariadic()
-                            && convertToVariadicParameter(expectedDeclaredType).isAssignableBy(actualArgumentType));
+                    && convertToVariadicParameter(expectedDeclaredType).isAssignableBy(actualArgumentType));
             if (!isAssignableWithoutSubstitution
                     && expectedDeclaredType.isReferenceType()
                     && actualArgumentType.isReferenceType()) {
@@ -257,7 +258,7 @@ public class MethodResolutionLogic {
             ResolvedType actualArgumentType = needleArgumentTypes.get(lastNeedleArgumentIndex);
             boolean finalArgumentIsArray = actualArgumentType.isArray()
                     && expectedVariadicParameterType.isAssignableBy(
-                            actualArgumentType.asArrayType().getComponentType());
+                    actualArgumentType.asArrayType().getComponentType());
             if (finalArgumentIsArray) {
                 // Treat as an array of values -- in which case the expected parameter type is the common type of this
                 // array.
@@ -442,7 +443,6 @@ public class MethodResolutionLogic {
      * Note that "needle" refers to that value being used as a search/query term to match against.
      *
      * @return true, if the given MethodUsage matches the given name/types (normally obtained from a ResolvedMethodDeclaration)
-     *
      * @see {@link MethodResolutionLogic#isApplicable(ResolvedMethodDeclaration, String, List, TypeSolver)}  }
      * @see {@link MethodResolutionLogic#isApplicable(ResolvedMethodDeclaration, String, List, TypeSolver, boolean)}
      */
@@ -624,11 +624,11 @@ public class MethodResolutionLogic {
             boolean wildcardTolerance) {
         List<ResolvedMethodDeclaration> applicableMethods = methods.stream()
                 . // Only consider methods with a matching name
-                filter(m -> m.getName().equals(name))
+                        filter(m -> m.getName().equals(name))
                 . // Filters out duplicate ResolvedMethodDeclaration by their signature.
-                filter(distinctByKey(ResolvedMethodDeclaration::getQualifiedSignature))
+                        filter(distinctByKey(ResolvedMethodDeclaration::getQualifiedSignature))
                 . // Checks if ResolvedMethodDeclaration is applicable to argumentsTypes.
-                filter((m) -> isApplicable(m, name, argumentsTypes, typeSolver, wildcardTolerance))
+                        filter((m) -> isApplicable(m, name, argumentsTypes, typeSolver, wildcardTolerance))
                 .collect(Collectors.toList());
         // If no applicable methods found, return as unsolved.
         if (applicableMethods.isEmpty()) {
@@ -907,6 +907,9 @@ public class MethodResolutionLogic {
             boolean staticOnly) {
         if (typeDeclaration instanceof MethodResolutionCapability) {
             return ((MethodResolutionCapability) typeDeclaration).solveMethod(name, argumentsTypes, staticOnly);
+        } else if (typeDeclaration instanceof AnnotationMemberResolutionCapability) {
+            SymbolReference<ResolvedAnnotationMemberDeclaration> member = (((AnnotationMemberResolutionCapability) typeDeclaration).solveMember(name, argumentsTypes, staticOnly));
+            System.out.println();
         }
         throw new UnsupportedOperationException(typeDeclaration.getClass().getCanonicalName());
     }

@@ -909,7 +909,8 @@ public class MethodResolutionLogic {
             return ((MethodResolutionCapability) typeDeclaration).solveMethod(name, argumentsTypes, staticOnly);
         } else if (typeDeclaration instanceof AnnotationMemberResolutionCapability) {
             SymbolReference<ResolvedAnnotationMemberDeclaration> member = (((AnnotationMemberResolutionCapability) typeDeclaration).solveMember(name, argumentsTypes, staticOnly));
-            System.out.println();
+            // Tian TODO
+            throw new UnsupportedOperationException("AnnotationMember, need resolve manually");
         }
         throw new UnsupportedOperationException(typeDeclaration.getClass().getCanonicalName());
     }

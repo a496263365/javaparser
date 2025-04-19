@@ -205,7 +205,7 @@ public class JavaParserInterfaceDeclaration extends AbstractTypeDeclaration
     public List<ResolvedFieldDeclaration> getAllFields() {
         List<ResolvedFieldDeclaration> fields = javaParserTypeAdapter.getFieldsForDeclaredVariables();
 
-        getAncestors().stream()
+        getAncestors(true).stream()
                 .filter(ancestor -> ancestor.getTypeDeclaration().isPresent())
                 .forEach(ancestor -> ancestor.getTypeDeclaration()
                         .get()
